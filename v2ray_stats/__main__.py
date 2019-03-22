@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from v2ray_stats.collector import collect_traffic_stats
 from v2ray_stats.scheduler import schedule
 from v2ray_stats.utils import V2RayLogger
+from v2ray_stats.output import pretty_print
 
 
 def init_database(db: str):
@@ -54,21 +55,6 @@ def query_database(year: int, month: int, db: str, table: str = 'outbound') -> l
     cursor.close()
     connection.close()
     return result
-
-
-def pretty_print(data, table: str = 'outband'):
-    """
-    Print data pretty.
-    :param data: Data list.
-    :param table: table
-    :return:
-    """
-    print('Table: {0}'.format(table))
-    print('-'*40)
-    print('{email:30s}|{usage:9s}|'.format(email='Email', usage='Usage'))
-    print('-'*40)
-    for row in data:
-        print('{email:30s}|{usage:6.2f}G'.format(email=row[0], usage=row[1] / (1024 * 1024 * 1024)))
 
 
 if __name__ == '__main__':
