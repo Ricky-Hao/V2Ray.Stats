@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     general_group.add_argument('-c', dest='config_path', metavar='config_path', type=str, nargs='?', default=None,
                                help='Config file path.')
-    general_group.add_argument('--debug', dest='debug', action='store_true', default=None, nargs='?', help='Debug mode.')
+    general_group.add_argument('--debug', dest='debug', action='store_true', default=None, help='Debug mode.')
 
     daemon_group = parser.add_argument_group('Daemon', 'Daemon settings.')
     daemon_group.add_argument('-s', dest='server', metavar='server', type=str, nargs='?', default=None,
@@ -79,13 +79,13 @@ if __name__ == '__main__':
     daemon_group.add_argument('--interval', dest='interval', type=int, nargs='?',default=None, help='Collector interval.')
 
     query_group = parser.add_argument_group('Query', 'Query settings.')
-    query_group.add_argument('-q', dest='query', action='store_true', default=False, nargs='?',
+    query_group.add_argument('-q', dest='query', action='store_true', default=False,
                              help='Query mode, with -y and -m to specific month.')
     query_group.add_argument('-y', dest='year', type=int, nargs='?', default=last_date.year, help='Query year.')
     query_group.add_argument('-m', dest='month', type=int, nargs='?', default=last_date.month, help='Query month.')
 
     email_group = parser.add_argument_group('Email', 'Email settings.')
-    email_group.add_argument('-e', dest='email', action='store_true', default=False, nargs='?',
+    email_group.add_argument('-e', dest='email', action='store_true', default=False,
                              help='Send traffic report email to user.')
 
     args = parser.parse_args()
