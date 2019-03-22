@@ -90,8 +90,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    V2RayLogger.init_logger(debug=args.debug)
-
     if args.config_path is not None:
         Config.load_config(args.config_path)
 
@@ -99,6 +97,8 @@ if __name__ == '__main__':
     Config.set('debug', args.debug)
     Config.set('server', args.server)
     Config.set('interval', args.interval)
+
+    V2RayLogger.init_logger(debug=Config.get('debug'))
 
     init_database(Config.get('database'))
 
