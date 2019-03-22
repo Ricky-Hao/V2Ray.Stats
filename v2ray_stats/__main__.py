@@ -22,6 +22,11 @@ def init_database(db: str):
                    'email TEXT,'
                    'traffic INT,'
                    'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)')
+    cursor.execute('CREATE TABLE IF NOT EXISTS inbound ('
+                   'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+                   'email TEXT,'
+                   'traffic INT,'
+                   'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)')
     cursor.close()
     connection.commit()
     connection.close()
