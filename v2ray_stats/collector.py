@@ -24,7 +24,7 @@ def collect_traffic_stats(db: str, server: str, reset: bool = True):
 
     connection = sqlite3.connect(db)
     cursor = connection.cursor()
-    cursor.executemany('INSERT INTO outbound [(email, traffic)] VALUES (?, ?)', outbound_list)
+    cursor.executemany('INSERT INTO outbound(email, traffic) VALUES (?, ?)', outbound_list)
     cursor.close()
     connection.commit()
     connection.close()
