@@ -13,10 +13,14 @@ def send_mail(month: str, data: list):
     :return:
     """
 
+    V2RayLogger.debug('SMTP server: {0}:{1}.'.format(Config.get('mail_host'), Config.get('mail_port')))
     smtp = smtplib.SMTP_SSL(Config.get('mail_host'), Config.get('mail_port'))
+    V2RayLogger.debug('SMTP login with: {0}:{1}.'.format(Config.get('mail_user'), Config.get('mail_pass')))
     smtp.login(Config.get('mail_user'), Config.get('mail_pass'))
+    V2RayLogger.debug('SMTP login successful.')
 
     for row in data:
+        V2RayLogger.debug('Send email: {0}:{1}.'.format(row[0], row[1]))
         message = '<tr align=left><th align="left">{0:30s}</th><th align="left">{1:6.2f}G</th></tr>\n'.format(
             row[0], row[1])
         message = MIMEText(message, 'html')
