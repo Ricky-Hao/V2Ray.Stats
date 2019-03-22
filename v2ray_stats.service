@@ -1,0 +1,13 @@
+[Unit]
+Description=V2Ray.Stats service
+After=v2ray.service
+Wants=v2ray.service
+
+[Service]
+Type=simple
+WorkingDirectory=$home
+ExecStart=python -m v2ray_stats -s 127.0.0.1:2335
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
