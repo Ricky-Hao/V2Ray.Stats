@@ -27,6 +27,6 @@ def pretty_print(data, table: str = 'outband'):
     table = Texttable()
     table.set_cols_align(["l", "r"])
     table.set_cols_dtype(['t', 'f'])
-    table.add_row(['Email', 'Usage'])
+    table.header(['Email', 'Usage'])
     table.add_rows(row_list)
     print(table.draw() + '\n')
