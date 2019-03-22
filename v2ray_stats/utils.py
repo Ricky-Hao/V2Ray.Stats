@@ -10,7 +10,7 @@ class V2RayLogger(object):
             cls._logger = logging.getLogger('V2Ray.Stats')
             console_handler = logging.StreamHandler()
 
-            formatter = logging.Formatter('[%(levelname)s][%(asctime)s] [%(name)s][%(funcName)s]: %(message)s',
+            formatter = logging.Formatter('[%(levelname)s][%(asctime)s] [%(name)s][%(module)s]: %(message)s',
                                           datefmt='%Y-%m-%d %H:%M:%S')
             console_handler.setFormatter(formatter)
             if debug:
