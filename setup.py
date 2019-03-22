@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='V2ray.Stats',
-    version='0.1.0',
+    version='0.2.0',
     url='https://github.com/Ricky-Hao/V2Ray.Stats',
     license='Apache License 2.0',
     author='Ricky Hao',

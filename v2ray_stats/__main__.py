@@ -9,6 +9,8 @@ from v2ray_stats.scheduler import schedule
 from v2ray_stats.utils import V2RayLogger
 from v2ray_stats.output import pretty_print
 from v2ray_stats.config import Config
+from v2ray_stats.query import query_traffic_stats
+from v2ray_stats.email import send_mail
 
 
 def init_database(db: str):
@@ -34,30 +36,6 @@ def init_database(db: str):
     connection.close()
 
 
-def query_database(year: int, month: int, db: str, table: str = 'outbound') -> list:
-    """
-    Query database with year and month
-    :param year: Year
-    :param month: Month
-    :param db: Database file path.
-    :return: Result row list.
-    """
-    begin_date = datetime.strptime('{0}-{1}-{2}'.format(year, month, 1), '%Y-%m-%d')
-    days = calendar.monthrange(year, month)[1]
-    end_date = begin_date + timedelta(days=days)
-    begin = begin_date.strftime('%Y-%m-%d')
-    end = end_date.strftime('%Y-%m-%d')
-
-    sql = 'SELECT email, SUM(traffic) FROM {table} WHERE timestamp BETWEEN "{begin}" AND "{end}" GROUP BY email'.format(
-        begin=begin, end=end, table=table)
-    connection = sqlite3.connect(db)
-    cursor = connection.cursor()
-    result = cursor.execute(sql).fetchall()
-    cursor.close()
-    connection.close()
-    return result
-
-
 if __name__ == '__main__':
     now = datetime.now()
     date = datetime.strptime('{0}-{1}'.format(now.year, now.month), '%Y-%m')
@@ -76,7 +54,8 @@ if __name__ == '__main__':
     daemon_group = parser.add_argument_group('Daemon', 'Daemon settings.')
     daemon_group.add_argument('-s', dest='server', metavar='server', type=str, nargs='?', default=None,
                               help='V2Ray API server address.')
-    daemon_group.add_argument('--interval', dest='interval', type=int, nargs='?',default=None, help='Collector interval.')
+    daemon_group.add_argument('--interval', dest='interval', type=int, nargs='?', default=None,
+                              help='Collector interval.')
 
     query_group = parser.add_argument_group('Query', 'Query settings.')
     query_group.add_argument('-q', dest='query', action='store_true', default=False,
@@ -103,11 +82,15 @@ if __name__ == '__main__':
     init_database(Config.get('database'))
 
     if args.query:
-        pretty_print(query_database(args.year, args.month, Config.get('database')))
-        pretty_print(query_database(args.year, args.month, Config.get('database'), table='inbound'), table='inbound')
+        pretty_print(query_traffic_stats(args.year, args.month, Config.get('database')))
+        pretty_print(query_traffic_stats(args.year, args.month, Config.get('database'), table='inbound'),
+                     table='inbound')
 
     elif args.email:
-        pass
+        V2RayLogger.info('Start to send email.')
+        send_mail(args.month, query_traffic_stats(args.year, args.month, Config.get('database')))
+        V2RayLogger.info('Done.')
+
     else:
         V2RayLogger.info('Running in background.')
         schedule.every(Config.get('interval')).minutes.do(collect_traffic_stats, Config.get('database'),
