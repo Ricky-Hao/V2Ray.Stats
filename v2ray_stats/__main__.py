@@ -83,4 +83,5 @@ if __name__ == '__main__':
         print('[Daemon]Run in background.')
         schedule.every(5).minutes.do(run_threaded, collect_traffic_stats, args.db, args.server)
         while True:
+            schedule.run_pending()
             time.sleep(1)
