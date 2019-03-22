@@ -8,6 +8,7 @@ from v2ray_stats.collector import collect_traffic_stats
 from v2ray_stats.scheduler import schedule
 from v2ray_stats.utils import V2RayLogger
 from v2ray_stats.output import pretty_print
+from v2ray_stats.config import Config
 
 
 def init_database(db: str):
@@ -64,34 +65,53 @@ if __name__ == '__main__':
     last_date = date - timedelta(days=days)
 
     parser = argparse.ArgumentParser(description='Collect V2Ray user traffic stats.')
-    parser.add_argument('-d', dest='db', metavar='database', type=str, nargs='?', default='v2ray_stats.sqlite3',
-                        help='Database file path.')
-    parser.add_argument('-s', dest='server', metavar='server', type=str, nargs='?', help='V2Ray API server address.')
-    parser.add_argument('-e', dest='email', action='store_true', default=False,
-                        help='Send traffic email to user every month.')
-    parser.add_argument('-c', dest='config_path', metavar='config_path', default='config.json',
-                        help='Config file path.')
-    parser.add_argument('-q', dest='query', action='store_true', default=False,
-                        help='Query mode, with -y and -m to specific month.')
-    parser.add_argument('-y', dest='year', type=int, nargs='?', default=last_date.year, help='Query year.')
-    parser.add_argument('-m', dest='month', type=int, nargs='?', default=last_date.month, help='Query month.')
-    parser.add_argument('--debug', dest='debug', action='store_true', default=False, help='Debug mode.')
-    parser.add_argument('--interval', dest='interval', type=int, default=5, help='Collector interval.')
+    general_group = parser.add_argument_group('General', 'General settings.')
+    general_group.add_argument('-d', dest='db', metavar='database', type=str, nargs='?', default=None,
+                               help='Database file path.')
+
+    general_group.add_argument('-c', dest='config_path', metavar='config_path', default=None,
+                               help='Config file path.')
+    general_group.add_argument('--debug', dest='debug', action='store_true', default=None, help='Debug mode.')
+
+    daemon_group = parser.add_argument_group('Daemon', 'Daemon settings.')
+    daemon_group.add_argument('-s', dest='server', metavar='server', type=str, nargs='?', default=None,
+                              help='V2Ray API server address.')
+    daemon_group.add_argument('--interval', dest='interval', type=int, default=None, help='Collector interval.')
+
+    query_group = parser.add_argument_group('Query', 'Query settings.')
+    query_group.add_argument('-q', dest='query', action='store_true', default=False,
+                             help='Query mode, with -y and -m to specific month.')
+    query_group.add_argument('-y', dest='year', type=int, nargs='?', default=last_date.year, help='Query year.')
+    query_group.add_argument('-m', dest='month', type=int, nargs='?', default=last_date.month, help='Query month.')
+
+    email_group = parser.add_argument_group('Email', 'Email settings.')
+    email_group.add_argument('-e', dest='email', action='store_true', default=False,
+                             help='Send traffic email to user every month.')
+
     args = parser.parse_args()
 
     V2RayLogger.init_logger(debug=args.debug)
 
-    init_database(args.db)
+    if args.config_path is not None:
+        Config.load_config(args.config_path)
+
+    Config.set('database', args.db)
+    Config.set('debug', args.debug)
+    Config.set('server', args.server)
+    Config.set('interval', args.interval)
+
+    init_database(Config.get('database'))
 
     if args.query:
-        pretty_print(query_database(args.year, args.month, args.db))
-        pretty_print(query_database(args.year, args.month, args.db, table='inbound'), table='inbound')
+        pretty_print(query_database(args.year, args.month, Config.get('database')))
+        pretty_print(query_database(args.year, args.month, Config.get('database'), table='inbound'), table='inbound')
 
     elif args.email:
         pass
     else:
         V2RayLogger.info('Running in background.')
-        schedule.every(args.interval).minutes.do(collect_traffic_stats, args.db, args.server)
+        schedule.every(Config.get('interval')).minutes.do(collect_traffic_stats, Config.get('database'),
+                                                          Config.get('server'))
         while True:
             schedule.run_pending()
             time.sleep(1)
