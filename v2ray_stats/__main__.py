@@ -90,7 +90,7 @@ if __name__ == '__main__':
     elif args.email:
         pass
     else:
-        V2RayLogger.info('[Daemon]Run in background.')
+        V2RayLogger.info('Running in background.')
         schedule.every(args.interval).minutes.do(collect_traffic_stats, args.db, args.server)
         while True:
             schedule.run_pending()
