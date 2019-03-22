@@ -70,6 +70,7 @@ if __name__ == '__main__':
     parser.add_argument('-y', dest='year', type=int, nargs='?', default=last_date.year, help='Query year.')
     parser.add_argument('-m', dest='month', type=int, nargs='?', default=last_date.month, help='Query month.')
     parser.add_argument('--debug', dest='debug', action='store_true', default=False, help='Debug mode.')
+    parser.add_argument('--interval', dest='interval', type=int, default=5, help='Collector interval.')
     args = parser.parse_args()
 
     V2RayLogger.init_logger(debug=args.debug)
@@ -85,7 +86,7 @@ if __name__ == '__main__':
         pass
     else:
         V2RayLogger.info('[Daemon]Run in background.')
-        schedule.every(5).minutes.do(collect_traffic_stats, args.db, args.server)
+        schedule.every(args.interval).minutes.do(collect_traffic_stats, args.db, args.server)
         while True:
             schedule.run_pending()
             time.sleep(1)

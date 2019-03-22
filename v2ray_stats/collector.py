@@ -21,12 +21,14 @@ def collect_traffic_stats(db: str, server: str, reset: bool = True):
 
     connection = sqlite3.connect(db)
     cursor = connection.cursor()
+    count = 0
     for stats in stats_list:
         if stats['bound'] == 'outbound':
             sql = 'INSERT INTO outbound(email, traffic) VALUES ({0}, {1})'.format(stats[0], int(stats[1]))
             cursor.execute(sql)
             V2RayLogger.debug(sql)
+            count += 1
     cursor.close()
     connection.commit()
     connection.close()
-    V2RayLogger.info('[Stats] Collect every 5 minutes.')
+    V2RayLogger.info('Collect {0} account.'.format(count))
