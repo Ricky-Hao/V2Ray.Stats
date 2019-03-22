@@ -83,11 +83,10 @@ if __name__ == '__main__':
         pretty_print(query_traffic_stats(args.year, args.month, Config.get('database')))
         pretty_print(query_traffic_stats(args.year, args.month, Config.get('database'), table='inbound'),
                      table='inbound')
-
-    elif args.email:
-        V2RayLogger.info('Start to send email.')
-        send_mail(args.month, query_traffic_stats(args.year, args.month, Config.get('database')))
-        V2RayLogger.info('Done.')
+        if args.email:
+            V2RayLogger.info('Start to send email.')
+            send_mail(args.month, query_traffic_stats(args.year, args.month, Config.get('database')))
+            V2RayLogger.info('Done.')
 
     else:
         V2RayLogger.info('Running in background.')
