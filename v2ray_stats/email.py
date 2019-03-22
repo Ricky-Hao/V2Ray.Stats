@@ -21,7 +21,7 @@ def send_mail(month: str, data: list):
 
     for row in data:
         V2RayLogger.debug('Send email: {0}:{1}.'.format(row[0], row[1]))
-        message = '<tr align=left><th align="left">{0:30s}</th><th align="left">{1:6.2f}G</th></tr>\n'.format(
+        message = '<tr align=left><th align="left">{0:30s}</th><th align="left">{1:9s}</th></tr>\n'.format(
             row[0], row[1])
         message = MIMEText(message, 'html')
         message['Subject'] = Header(Config.get('mail_subject') + ': {0}'.format(month))
