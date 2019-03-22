@@ -1,11 +1,11 @@
 {
-    'mail_host': None,
-    'mail_port': None,
-    'mail_user': None,
-    'mail_pass': None,
-    'mail_subject': 'V2Ray Traffic Report',
-    'database': 'v2ray_stats.sqlite3',
-    'server': '127.0.0.1:2335',
-    'interval': 5,
-    'debug': False
+    "mail_host": None,
+    "mail_port": None,
+    "mail_user": None,
+    "mail_pass": None,
+    "mail_subject": "V2Ray Traffic Report",
+    "database": "v2ray_stats.sqlite3",
+    "server": "127.0.0.1:2335",
+    "interval": 5,
+    "debug": False
 }
