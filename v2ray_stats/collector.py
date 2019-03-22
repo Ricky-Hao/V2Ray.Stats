@@ -1,6 +1,7 @@
 import sqlite3
 
 from v2ray_stats.scheduler import catch_exceptions
+from v2ray_stats.utils import V2RayLogger
 from v2ray_stats.v2ctl import V2Ctl
 
 
@@ -16,13 +17,16 @@ def collect_traffic_stats(db: str, server: str, reset: bool = True):
 
     v2ctl = V2Ctl(server=server)
     stats_list = v2ctl.query_stats(reset=reset)
+    V2RayLogger.debug(stats_list)
 
     connection = sqlite3.connect(db)
     cursor = connection.cursor()
     for stats in stats_list:
         if stats['bound'] == 'outbound':
-            cursor.execute('INSERT INTO outbound(email, traffic) VALUES (?, ?)', (stats[0], int(stats[1])))
+            sql = 'INSERT INTO outbound(email, traffic) VALUES ({0}, {1})'.format(stats[0], int(stats[1]))
+            cursor.execute(sql)
+            V2RayLogger.debug(sql)
     cursor.close()
     connection.commit()
     connection.close()
-    print('[Stats] Collect every 5 minutes.')
+    V2RayLogger.info('[Stats] Collect every 5 minutes.')

@@ -5,7 +5,8 @@ import time
 from datetime import datetime, timedelta
 
 from v2ray_stats.collector import collect_traffic_stats
-from v2ray_stats.scheduler import run_threaded, schedule
+from v2ray_stats.scheduler import schedule
+from v2ray_stats.utils import V2RayLogger
 
 
 def init_database(db: str):
@@ -68,7 +69,10 @@ if __name__ == '__main__':
                         help='Query mode, with -y and -m to specific month.')
     parser.add_argument('-y', dest='year', type=int, nargs='?', default=last_date.year, help='Query year.')
     parser.add_argument('-m', dest='month', type=int, nargs='?', default=last_date.month, help='Query month.')
+    parser.add_argument('--debug', dest='debug', action='store_true', default=False, help='Debug mode.')
     args = parser.parse_args()
+
+    V2RayLogger.init_logger(debug=args.debug)
 
     init_database(args.db)
 
@@ -80,8 +84,8 @@ if __name__ == '__main__':
     elif args.email:
         pass
     else:
-        print('[Daemon]Run in background.')
-        schedule.every(5).minutes.do(run_threaded, collect_traffic_stats, args.db, args.server)
+        V2RayLogger.info('[Daemon]Run in background.')
+        schedule.every(5).minutes.do(collect_traffic_stats, args.db, args.server)
         while True:
             schedule.run_pending()
             time.sleep(1)
