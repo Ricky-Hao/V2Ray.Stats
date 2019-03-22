@@ -62,9 +62,7 @@ if __name__ == '__main__':
                              help='Query mode, with -y and -m to specific month.')
     query_group.add_argument('-y', dest='year', type=int, nargs='?', default=last_date.year, help='Query year.')
     query_group.add_argument('-m', dest='month', type=int, nargs='?', default=last_date.month, help='Query month.')
-
-    email_group = parser.add_argument_group('Email', 'Email settings.')
-    email_group.add_argument('-e', dest='email', action='store_true', default=False,
+    query_group.add_argument('-e', dest='email', action='store_true', default=False,
                              help='Send traffic report email to user.')
 
     args = parser.parse_args()
