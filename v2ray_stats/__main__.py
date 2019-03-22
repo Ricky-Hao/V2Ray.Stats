@@ -64,7 +64,9 @@ def pretty_print(data, table: str = 'outband'):
     :return:
     """
     print('Table: {0}'.format(table))
-    print('{email:30s}|{usage:9s}'.format(email='Email', usage='Usage'))
+    print('_'*40)
+    print('{email:30s}|{usage:10s}|'.format(email='Email', usage='Usage'))
+    print('_'*40)
     for row in data:
         print('{email:30s}|{usage:6.2f}G'.format(email=row[0], usage=row[1] / (1024 * 1024 * 1024)))
 
