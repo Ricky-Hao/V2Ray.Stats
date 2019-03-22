@@ -42,7 +42,7 @@ class V2Ctl(object):
         assert isinstance(pattern, str)
         assert isinstance(reset, bool)
 
-        request = 'pattern: {pattern} reset: {reset}'.format(pattern=pattern, reset='true' if bool else 'false')
+        request = 'pattern: "{pattern}" reset: {reset}'.format(pattern=pattern, reset='true' if bool else 'false')
 
         output = self._call_api(method='StatsService.QueryStats', request=request)
         m = re.compile('stat: <\n {2}name: "(.*)"\n {2}value: (.*)\n>')
