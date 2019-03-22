@@ -7,7 +7,7 @@ class V2RayLogger(object):
     @classmethod
     def init_logger(cls, debug: bool = False):
         if cls._logger is None:
-            cls._logger = logging.getLogger('[V2Ray.Stats]')
+            cls._logger = logging.getLogger('V2Ray.Stats')
             console_handler = logging.StreamHandler()
 
             formatter = logging.Formatter('[%(levelname)s][%(asctime)s] [%(name)s][%(funcName)s]: %(message)s',
