@@ -16,15 +16,12 @@ def collect_traffic_stats(db: str, server: str, reset: bool = True):
 
     v2ctl = V2Ctl(server=server)
     stats_list = v2ctl.query_stats(reset=reset)
-    outbound_list = list()
-    for stats in stats_list:
-        if stats['bound'] == 'outbound':
-            temp_tuple = (stats['email'], int(stats['value']))
-            outbound_list.append(temp_tuple)
 
     connection = sqlite3.connect(db)
     cursor = connection.cursor()
-    cursor.executemany('INSERT INTO outbound(email, traffic) VALUES (?, ?)', outbound_list)
+    for stats in stats_list:
+        if stats['bound'] == 'outbound':
+            cursor.execute('INSERT INTO outbound(email, traffic) VALUES (?, ?)', (stats[0], int(stats[1])))
     cursor.close()
     connection.commit()
     connection.close()
