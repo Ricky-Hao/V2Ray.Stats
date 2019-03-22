@@ -5,8 +5,7 @@ Wants=v2ray.service
 
 [Service]
 Type=simple
-WorkingDirectory=$home
-ExecStart=python -m v2ray_stats -s 127.0.0.1:2335
+ExecStart=python -m v2ray_stats -c /etc/v2ray_stats/%i.json
 Restart=on-failure
 
 [Install]
