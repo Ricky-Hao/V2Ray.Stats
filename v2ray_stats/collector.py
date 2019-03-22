@@ -1,7 +1,7 @@
 import sqlite3
 
-from .scheduler import catch_exceptions
-from .v2ctl import V2Ctl
+from v2ray_stats.scheduler import catch_exceptions
+from v2ray_stats.v2ctl import V2Ctl
 
 
 @catch_exceptions

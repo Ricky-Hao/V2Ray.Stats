@@ -4,8 +4,8 @@ import sqlite3
 import time
 from datetime import datetime, timedelta
 
-from .collector import collect_traffic_stats
-from .scheduler import run_threaded, schedule
+from v2ray_stats.collector import collect_traffic_stats
+from v2ray_stats.scheduler import run_threaded, schedule
 
 
 def init_database(db: str):
