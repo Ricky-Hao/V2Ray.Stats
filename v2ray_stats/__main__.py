@@ -32,7 +32,7 @@ def init_database(db: str):
     connection.close()
 
 
-def query_database(year: int, month: int, db: str) -> list:
+def query_database(year: int, month: int, db: str, table: str = 'outbound') -> list:
     """
     Query database with year and month
     :param year: Year
@@ -46,14 +46,27 @@ def query_database(year: int, month: int, db: str) -> list:
     begin = begin_date.strftime('%Y-%m-%d')
     end = end_date.strftime('%Y-%m-%d')
 
-    sql = 'SELECT email, SUM(traffic) FROM outbound WHERE timestamp BETWEEN "{begin}" AND "{end}" GROUP BY email'.format(
-        begin=begin, end=end)
+    sql = 'SELECT email, SUM(traffic) FROM {table} WHERE timestamp BETWEEN "{begin}" AND "{end}" GROUP BY email'.format(
+        begin=begin, end=end, table=table)
     connection = sqlite3.connect(db)
     cursor = connection.cursor()
     result = cursor.execute(sql).fetchall()
     cursor.close()
     connection.close()
     return result
+
+
+def pretty_print(data, table: str = 'outband'):
+    """
+    Print data pretty.
+    :param data: Data list.
+    :param table: table
+    :return:
+    """
+    print('Table: {0}'.format(table))
+    print('{email:30s}|{usage:9s}'.format(email='Email', usage='Usage'))
+    for row in data:
+        print('{email:30s}|{usage:6.2f}G'.format(email=row[0], usage=row[1] / (1024 * 1024)))
 
 
 if __name__ == '__main__':
@@ -83,9 +96,8 @@ if __name__ == '__main__':
     init_database(args.db)
 
     if args.query:
-        print('{email:30s}|{usage:9s}'.format(email='Email', usage='Usage'))
-        for row in query_database(args.year, args.month, args.db):
-            print('{email:30s}|{usage:6.2f}G'.format(email=row[0], usage=row[1] / (1024 * 1024)))
+        pretty_print(query_database(args.year, args.month, args.db))
+        pretty_print(query_database(args.year, args.month, args.db, table='inbound'), table='inbound')
 
     elif args.email:
         pass

@@ -33,4 +33,4 @@ def collect_traffic_stats(db: str, server: str, reset: bool = True):
     cursor.close()
     connection.commit()
     connection.close()
-    V2RayLogger.info('Collect {0} account.'.format(len(stats_list) / 2))
+    V2RayLogger.info('Collect {0} account.'.format(int(len(stats_list) / 2)))
