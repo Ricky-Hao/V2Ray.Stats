@@ -1,7 +1,7 @@
 from texttable import Texttable
 
 
-def pretty_print(data, table: str = 'outband'):
+def pretty_print(data, table: str = 'outbound'):
     """
     Print data pretty.
     :param data: Data list.
