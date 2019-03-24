@@ -42,7 +42,7 @@ if __name__ == '__main__':
     days = calendar.monthrange(date.year, date.month)[1]
     last_date = date - timedelta(days=days)
 
-    parser = argparse.ArgumentParser(description='Collect V2Ray user traffic stats.')
+    parser = argparse.ArgumentParser(usage='v2ray_stats', description='Collect V2Ray user traffic stats.')
     general_group = parser.add_argument_group('General', 'General settings.')
     general_group.add_argument('-d', dest='db', metavar='database', type=str, nargs='?', default=None,
                                help='Database file path.')
