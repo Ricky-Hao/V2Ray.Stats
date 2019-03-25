@@ -2,6 +2,8 @@ import re
 import subprocess
 from traceback import format_exc
 
+from v2ray_stats.utils import V2RayLogger
+
 
 class V2Ctl(object):
     def __init__(self, server: str):
@@ -24,12 +26,14 @@ class V2Ctl(object):
         assert isinstance(request, str)
 
         try:
+            V2RayLogger.debug(["v2ctl", "api", '--server={0}'.format(self.server), method, request])
             process = subprocess.run(["v2ctl", "api", '--server={0}'.format(self.server), method, request],
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
         except subprocess.CalledProcessError as err:
             error = '{0}\n{1}\n{2}'.format(format_exc(), locals(), err.stderr.decode())
             raise Exception(error)
 
+        V2RayLogger.debug(process.stdout.decode())
         return process.stdout.decode()
 
     def query_stats(self, pattern: str = "", reset: bool = False) -> list:
@@ -49,14 +53,29 @@ class V2Ctl(object):
         result = m.findall(output)
 
         result_list = []
-        email_m = re.compile('user>>>(.*)>>>traffic>>>(downlink|uplink)')
+        user_m = re.compile('user>>>(.*)>>>traffic>>>(downlink|uplink)')
+        system_m = re.compile('inbound>>>(.*)>>>traffic>>>(downlink|uplink)')
         for key, value in result:
-            [(email, bound)] = email_m.findall(key)
-            temp_dict = {
-                'email': email,
-                'bound': bound,
-                'value': value
-            }
-            result_list.append(temp_dict)
+            temp = user_m.findall(key)
+            if temp != []:
+                [(email, bound)] = temp
+                temp_dict = {
+                    'name': email,
+                    'bound': bound,
+                    'value': value
+                }
+                result_list.append(temp_dict)
+                continue
+
+            temp = system_m.findall(key)
+            if temp != []:
+                [(tag, bound)] = temp
+                temp_dict = {
+                    'name': tag,
+                    'bound': bound,
+                    'value': value
+                }
+                result_list.append(temp_dict)
+
 
         return result_list

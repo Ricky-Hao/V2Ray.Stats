@@ -5,12 +5,12 @@ import time
 from datetime import datetime, timedelta
 
 from v2ray_stats.collector import collect_traffic_stats
+from v2ray_stats.config import Config
+from v2ray_stats.email import send_mail
+from v2ray_stats.output import pretty_print
+from v2ray_stats.query import query_traffic_stats
 from v2ray_stats.scheduler import schedule
 from v2ray_stats.utils import V2RayLogger
-from v2ray_stats.output import pretty_print
-from v2ray_stats.config import Config
-from v2ray_stats.query import query_traffic_stats
-from v2ray_stats.email import send_mail
 
 
 def init_database(db: str):
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     else:
         V2RayLogger.info('Running in background.')
         schedule.every(Config.get('interval')).minutes.do(collect_traffic_stats, Config.get('database'),
-                                                          Config.get('server'))
+                                                          Config.get('server'), pattern='user')
         while True:
             schedule.run_pending()
             time.sleep(1)

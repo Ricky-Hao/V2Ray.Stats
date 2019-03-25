@@ -6,7 +6,7 @@ from v2ray_stats.v2ctl import V2Ctl
 
 
 @catch_exceptions
-def collect_traffic_stats(db: str, server: str, reset: bool = True):
+def collect_traffic_stats(db: str, server: str, pattern: str = '', reset: bool = True):
     """
     Only collect outbound traffic.
     :return:
@@ -16,18 +16,18 @@ def collect_traffic_stats(db: str, server: str, reset: bool = True):
     assert isinstance(reset, bool)
 
     v2ctl = V2Ctl(server=server)
-    stats_list = v2ctl.query_stats(reset=reset)
+    stats_list = v2ctl.query_stats(pattern=pattern, reset=reset)
     V2RayLogger.debug(stats_list)
 
     connection = sqlite3.connect(db)
     cursor = connection.cursor()
     for stats in stats_list:
         if stats['bound'] == 'downlink':
-            sql = 'INSERT INTO outbound(email, traffic) VALUES ("{0}", {1})'.format(stats['email'], int(stats['value']))
+            sql = 'INSERT INTO outbound(email, traffic) VALUES ("{0}", {1})'.format(stats['name'], int(stats['value']))
             cursor.execute(sql)
             V2RayLogger.debug(sql)
         elif stats['bound'] == 'uplink':
-            sql = 'INSERT INTO inbound(email, traffic) VALUES ("{0}", {1})'.format(stats['email'], int(stats['value']))
+            sql = 'INSERT INTO inbound(email, traffic) VALUES ("{0}", {1})'.format(stats['name'], int(stats['value']))
             cursor.execute(sql)
             V2RayLogger.debug(sql)
     cursor.close()
