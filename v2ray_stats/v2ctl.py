@@ -60,6 +60,7 @@ class V2Ctl(object):
             if temp != []:
                 [(email, bound)] = temp
                 temp_dict = {
+                    'type': 'user',
                     'name': email,
                     'bound': bound,
                     'value': value
@@ -71,6 +72,7 @@ class V2Ctl(object):
             if temp != []:
                 [(tag, bound)] = temp
                 temp_dict = {
+                    'type': 'system',
                     'name': tag,
                     'bound': bound,
                     'value': value

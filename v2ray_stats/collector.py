@@ -22,14 +22,19 @@ def collect_traffic_stats(db: str, server: str, pattern: str = '', reset: bool =
     connection = sqlite3.connect(db)
     cursor = connection.cursor()
     for stats in stats_list:
-        if stats['bound'] == 'downlink':
-            sql = 'INSERT INTO outbound(email, traffic) VALUES ("{0}", {1})'.format(stats['name'], int(stats['value']))
-            cursor.execute(sql)
-            V2RayLogger.debug(sql)
-        elif stats['bound'] == 'uplink':
-            sql = 'INSERT INTO inbound(email, traffic) VALUES ("{0}", {1})'.format(stats['name'], int(stats['value']))
-            cursor.execute(sql)
-            V2RayLogger.debug(sql)
+        if stats['type'] == 'user':
+            if stats['bound'] == 'downlink':
+                sql = 'INSERT INTO outbound(email, traffic) VALUES ("{0}", {1})'.format(stats['name'],
+                                                                                        int(stats['value']))
+                cursor.execute(sql)
+                V2RayLogger.debug(sql)
+            elif stats['bound'] == 'uplink':
+                sql = 'INSERT INTO inbound(email, traffic) VALUES ("{0}", {1})'.format(stats['name'],
+                                                                                       int(stats['value']))
+                cursor.execute(sql)
+                V2RayLogger.debug(sql)
+        elif stats['type'] == 'system':
+            pass
     cursor.close()
     connection.commit()
     connection.close()
