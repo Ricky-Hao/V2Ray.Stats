@@ -21,15 +21,18 @@ def init_database(db: str):
     """
     connection = sqlite3.connect(db)
     cursor = connection.cursor()
-    cursor.execute('CREATE TABLE IF NOT EXISTS outbound ('
+    cursor.execute('CREATE TABLE IF NOT EXISTS user_traffic ('
                    'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-                   'email TEXT,'
+                   'name TEXT,'
                    'traffic INT,'
+                   'type TEXT,'
                    'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)')
-    cursor.execute('CREATE TABLE IF NOT EXISTS inbound ('
+
+    cursor.execute('CREATE TABLE IF NOT EXISTS system_traffic ('
                    'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-                   'email TEXT,'
+                   'name TEXT,'
                    'traffic INT,'
+                   'type TEXT,'
                    'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)')
     cursor.close()
     connection.commit()
@@ -80,18 +83,29 @@ if __name__ == '__main__':
     init_database(Config.get('database'))
 
     if args.query:
-        pretty_print(query_traffic_stats(args.year, args.month, Config.get('database')))
-        pretty_print(query_traffic_stats(args.year, args.month, Config.get('database'), table='inbound'),
-                     table='inbound')
+        user_downlink = query_traffic_stats(args.year, args.month, Config.get('database'), table='user_traffic',
+                                            traffic_type='downlink')
+        pretty_print(user_downlink, table='user_traffic', traffic_type='downlink')
+        user_uplink = query_traffic_stats(args.year, args.month, Config.get('database'), table='user_traffic',
+                                          traffic_type='uplink')
+        pretty_print(user_uplink, table='user_traffic', traffic_type='uplink')
+
+        system_downlink = query_traffic_stats(args.year, args.month, Config.get('database'), table='system_traffic',
+                                              traffic_type='downlink')
+        system_uplink = query_traffic_stats(args.year, args.month, Config.get('database'), table='system_traffic',
+                                            traffic_type='uplink')
+        pretty_print(system_downlink, table='system_traffic', traffic_type='downlink')
+        pretty_print(system_uplink, table='system_traffic', traffic_type='uplink')
+
         if args.email:
             V2RayLogger.info('Start to send email.')
-            send_mail(args.month, query_traffic_stats(args.year, args.month, Config.get('database')))
+            send_mail(args.month, user_downlink)
             V2RayLogger.info('Done.')
 
     else:
         V2RayLogger.info('Running in background.')
         schedule.every(Config.get('interval')).minutes.do(collect_traffic_stats, Config.get('database'),
-                                                          Config.get('server'), pattern='user')
+                                                          Config.get('server'))
         while True:
             schedule.run_pending()
             time.sleep(1)

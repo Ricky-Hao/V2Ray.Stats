@@ -1,14 +1,17 @@
-import sqlite3
 import calendar
+import sqlite3
 from datetime import datetime, timedelta
 
 
-def query_traffic_stats(year: int, month: int, db: str, table: str = 'outbound') -> list:
+def query_traffic_stats(year: int, month: int, db: str, table: str = 'user_traffic',
+                        traffic_type: str = 'downlink') -> list:
     """
     Query traffic stats with year and month
     :param year: Year
     :param month: Month
     :param db: Database file path.
+    :param table: Query table
+    :param traffic_type: uplink or downlink
     :return: Result row list.
     """
     begin_date = datetime.strptime('{0}-{1}-{2}'.format(year, month, 1), '%Y-%m-%d')
@@ -17,8 +20,8 @@ def query_traffic_stats(year: int, month: int, db: str, table: str = 'outbound')
     begin = begin_date.strftime('%Y-%m-%d')
     end = end_date.strftime('%Y-%m-%d')
 
-    sql = 'SELECT email, SUM(traffic) FROM {table} WHERE timestamp BETWEEN "{begin}" AND "{end}" GROUP BY email'.format(
-        begin=begin, end=end, table=table)
+    sql = 'SELECT name, SUM(traffic) FROM {table} WHERE type="{traffic_type}" AND timestamp BETWEEN "{begin}" AND "{end}" GROUP BY name'.format(
+        begin=begin, end=end, table=table, traffic_type=traffic_type)
     connection = sqlite3.connect(db)
     cursor = connection.cursor()
     result = cursor.execute(sql).fetchall()
