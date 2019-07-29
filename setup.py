@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='V2ray.Stats',
-    version='0.3.0',
+    version='0.3.1',
     url='https://github.com/Ricky-Hao/V2Ray.Stats',
     license='Apache License 2.0',
     author='Ricky Hao',
@@ -16,6 +16,7 @@ setup(
     packages=['v2ray_stats'],
     install_requires=[
         'schedule',
-        'texttable'
+        'texttable',
+        'python-dateutil'
     ]
 )

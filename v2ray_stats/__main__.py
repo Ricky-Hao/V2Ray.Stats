@@ -1,8 +1,9 @@
 import argparse
-import calendar
 import sqlite3
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
+
+from dateutil.relativedelta import relativedelta
 
 from v2ray_stats.collector import collect_traffic_stats
 from v2ray_stats.config import Config
@@ -41,9 +42,7 @@ def init_database(db: str):
 
 if __name__ == '__main__':
     now = datetime.now()
-    date = datetime.strptime('{0}-{1}'.format(now.year, now.month), '%Y-%m')
-    days = calendar.monthrange(date.year, date.month)[1]
-    last_date = date - timedelta(days=days)
+    last_date = now + relativedelta(months=-1)
 
     parser = argparse.ArgumentParser(usage='v2ray_stats', description='Collect V2Ray user traffic stats.')
     general_group = parser.add_argument_group('General', 'General settings.')
