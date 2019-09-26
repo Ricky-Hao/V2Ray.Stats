@@ -35,5 +35,5 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
         TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
       with:
-        args = "upload --skip-existing ./dist/*"
+        args: "upload --skip-existing ./dist/*"
     
