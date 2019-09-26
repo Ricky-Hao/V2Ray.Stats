@@ -1,4 +1,4 @@
-name: V2Ray.Stats
+name: Build
 
 on: 
   push:
