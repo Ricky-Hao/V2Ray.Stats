@@ -30,10 +30,8 @@ jobs:
       run: |
         python3 setup.py sdist bdist_wheel
     - name: Publish
-      uses: ross/python-actions/twine@master
-      env:
-        TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-        TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+      uses: pypa/gh-action-pypi-publish@v1.5.0
       with:
-        args: "upload --skip-existing ./dist/*"
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}
     
