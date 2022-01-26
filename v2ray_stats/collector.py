@@ -35,6 +35,13 @@ def collect_traffic_stats(db: str, server: str, pattern: str = '', reset: bool =
                                                                                                       stats['bound'])
             cursor.execute(sql)
             V2RayLogger.debug(sql)
+        elif stats['type'] == 'outbound':
+            sql = 'INSERT INTO outbound_traffic(name, traffic, type) VALUES ("{0}", {1}, "{2}")'.format(stats['name'],
+                                                                                                      int(stats[
+                                                                                                              'value']),
+                                                                                                      stats['bound'])
+            cursor.execute(sql)
+            V2RayLogger.debug(sql)
     cursor.close()
     connection.commit()
     connection.close()
