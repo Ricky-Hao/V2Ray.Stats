@@ -55,6 +55,7 @@ class V2Ctl(object):
         result_list = []
         user_m = re.compile('user>>>(.*)>>>traffic>>>(downlink|uplink)')
         system_m = re.compile('inbound>>>(.*)>>>traffic>>>(downlink|uplink)')
+        outbound_m = re.compile('outbound>>>(.*)>>>traffic>>>(downlink|uplink)')
         for key, value in result:
             temp = user_m.findall(key)
             if temp != []:
@@ -73,6 +74,18 @@ class V2Ctl(object):
                 [(tag, bound)] = temp
                 temp_dict = {
                     'type': 'system',
+                    'name': tag,
+                    'bound': bound,
+                    'value': value
+                }
+                result_list.append(temp_dict)
+                continue
+                
+            temp = outbound_m.findall(key)    
+            if temp != []:
+                [(tag, bound)] = temp
+                temp_dict = {
+                    'type': 'outbound',
                     'name': tag,
                     'bound': bound,
                     'value': value
